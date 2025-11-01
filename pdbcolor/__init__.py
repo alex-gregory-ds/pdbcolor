@@ -85,8 +85,10 @@ class PdbColor(Pdb):
         self.code_tag = ":TAG:"
         self.stack_tag = ":STACK:"
 
-    # Autocomplete
-    complete = rlcompleter.Completer(locals()).complete
+    def complete(self, text, state):
+        completer = rlcompleter.Completer(self.curframe_locals)
+        completion = completer.complete(text, state)
+        return completion
 
     def highlight_code(self, lines: list[str]) -> list[str]:
         """Highlight code and 'tag' to end of each line for easy identification.
