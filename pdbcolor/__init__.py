@@ -85,11 +85,6 @@ class PdbColor(Pdb):
         self.code_tag = ":TAG:"
         self.stack_tag = ":STACK:"
 
-    def complete(self, text, state):
-        completer = rlcompleter.Completer(self.curframe_locals)
-        completion = completer.complete(text, state)
-        return completion
-
     def highlight_code(self, lines: list[str]) -> list[str]:
         """Highlight code and 'tag' to end of each line for easy identification.
 
@@ -250,6 +245,10 @@ class PdbColor(Pdb):
     def format_stack_entry(self, frame_lineno, lprefix=": "):
         # Add tag to the end of stack entries to make them easier to identify later
         return super().format_stack_entry(frame_lineno, lprefix) + self.stack_tag
+
+
+# Enable tab completion
+PdbColor.complete = rlcompleter.Completer().complete
 
 
 class PathLexer(RegexLexer):
