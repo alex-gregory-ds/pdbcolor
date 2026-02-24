@@ -20,24 +20,36 @@ pip install pdbcolor
 
 ## Setup
 
-Python can be configured to use PDB Color by changing the `PYTHONBREAKPOINT`
-environment variable. To use PDB Color temporarily, add the 
-`PYTHONBREAKPOINT=pdbcolor.set_trace` prefix before running your python script:
+To use PDB Color, you must set the `PYTHONBREAKPOINT` environment variable to
+`pdbcolor.set_trace`. You can do this by setting `PYTHONBREAKPOINT` before your
+python command. For example:
 
 ```shell
 PYTHONBREAKPOINT=pdbcolor.set_trace python3 main.py
 ```
 
-To make PDB Color the default for all Python sessions, set the
-`PYTHONBREAKPOINT` environment variable to `pdbcolor.set_trace`. On Mac and
-Linux, you can do this with the `export` command:
+For convenience, add an alias for the prefix above to your terminal
+configuration file (e.g. `.bashrc` or `.zshrc`). For example:
+
+```shell
+alias pdc='PYTHONBREAKPOINT=pdbcolor.set_trace'
+```
+
+This allows you to use PDB Color as follows:
+
+```shell
+pdc python3 main.py
+```
+
+You can avoid the prefix entirely by setting the `PYTHONBREAKPOINT` variable in
+every terminal session. You can do this in your `.bashrc` with the following:
 
 ```shell
 export PYTHONBREAKPOINT=pdbcolor.set_trace
 ```
 
-Add this line to your terminal configuration file (e.g. `.bashrc` or `.zshrc`)
-to ensure the setting persists across terminal settings.
+This can cause unusual behaviour especially when working with `pytest`, so it
+is generally recommended to use the `pdc` alias.
 
 ## Autocomplete
 
@@ -102,18 +114,4 @@ For example:
 
 ```shell
 PYTHONBREAKPOINT=pdb.set_trace python3 -m pytest --pdbcls=pdbcolor:PdbColor
-```
-
-To save on typing, consider adding the following aliases to your terminal
-configuration file:
-
-```shell
-alias pdb='PYTHONBREAKPOINT=pdb.set_trace'
-alias pdc='PYTHONBREAKPOINT=pdbcolor.set_trace'
-```
-
-The previous command then becomes:
-
-```shell
-pdb python3 -m pytest --pdbcls=pdbcolor:PdbColor
 ```
