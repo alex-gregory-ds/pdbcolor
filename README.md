@@ -76,6 +76,50 @@ str.isalnum(       str.join(          str.rjust(         str.zfill(
 (Pdb) str.
 ```
 
+## Docstring Shorthand
+
+Add `?` to the end of your expressions to get the docstring for your object. For
+example, `"hello.upper?"` gets the docstring for the `upper` function:
+
+```
+(Pdb) "hello".upper?
+Return a copy of the string converted to uppercase.
+```
+
+Take care to be precise where you use `?`. For example, using `"hello".upper()?`
+produces a different docstring:
+
+```
+(Pdb) "hello".upper()?
+str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to 'utf-8'.
+errors defaults to 'strict'.
+```
+
+This is the docstring for a string object because `"hello".upper()` evaluates to
+a string. You get the same docstring using `"hello"?`:
+
+```
+(Pdb) "hello"?
+str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to 'utf-8'.
+errors defaults to 'strict'.
+```
+
 ## Post-mortem debugging
 
 PDB can can be triggered post-mortem (after an exception has been raised) with

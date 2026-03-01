@@ -246,6 +246,45 @@ class PdbColor(Pdb):
         # Add tag to the end of stack entries to make them easier to identify later
         return super().format_stack_entry(frame_lineno, lprefix) + self.stack_tag
 
+    def onecmd(self, line: str):
+        """Override onecmd to handle ? for docstrings.
+
+        Users can append ? to an expression to see its docstring.
+        For example: "hello".upper()?
+        """
+        line = line.strip()
+        if line.endswith("?"):
+            expression = line[:-1].strip()
+            return self.show_docstring(expression)
+        else:
+            return super().onecmd(line)
+
+    def show_docstring(self, expression: str):
+        """Show docstring for an expression.
+
+        Parameters
+        ----------
+        expression : str
+            The expression to evaluate and get docstring for.
+        """
+        try:
+            if not self.curframe:
+                self.message("No active frame")
+                return None
+
+            # Evaluate the expression in the current frame
+            object_ = eval(expression, self.curframe.f_globals, self.curframe.f_locals)
+
+            docstring = object_.__doc__ if hasattr(object_, "__doc__") else None
+
+            if docstring:
+                docstring = docstring.strip()
+                self.message(docstring)
+            else:
+                self.message(f"No docstring for '{expression}'")
+        except Exception as e:
+            self.message(f"Error evaluating '{expression}': {e}")
+
 
 # Enable tab completion
 PdbColor.complete = rlcompleter.Completer().complete
