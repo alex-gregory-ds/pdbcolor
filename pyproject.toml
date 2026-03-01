@@ -28,8 +28,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Alex-JG3/pdbcolor"
-Issues = "https://github.com/Alex-JG3/pdbcolor/issues"
+Homepage = "https://github.com/alex-gregory-ds/pdbcolor"
+Issues = "https://github.com/alex-gregory-ds/pdbcolor/issues"
 
 [tool.hatch.build]
 exclude = ["images"]
