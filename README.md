@@ -4,11 +4,11 @@ Add some color to the python debugger.
 
 Using PDB:
 
-![Code example using PDB](images/before.png)
+![Code example using PDB](https://raw.githubusercontent.com/alex-gregory-ds/pdbcolor/main/images/before.png)
 
 Using PDB Color:
 
-![Code example using PDB](images/after.png)
+![Code example using PDB](https://raw.githubusercontent.com/alex-gregory-ds/pdbcolor/main/images/after.png)
 
 ## Installation
 
