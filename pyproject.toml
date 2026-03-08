@@ -24,7 +24,8 @@ license-files = ["LICENSE"]
 [project.optional-dependencies]
 dev = [
     "ruff",
-    "pre-commit"
+    "pre-commit",
+    "pytest",
 ]
 
 [project.urls]
