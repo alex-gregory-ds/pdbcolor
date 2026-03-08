@@ -30,6 +30,11 @@ jobs:
     needs:
     - build
     steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
     - name: Upgrade pip
       run: python3 -m pip install --upgrade pip
     - name: Install dev dependencies
@@ -41,6 +46,7 @@ jobs:
     name: Publish Python distribution to PyPI
     if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
+    - test
     - build
     runs-on: ubuntu-latest
     environment:
