@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+import json
 import linecache
 import re
 import rlcompleter
 import sys
-from dataclasses import dataclass
+import warnings
+from dataclasses import dataclass, fields
+from pathlib import Path
 from pdb import Pdb
 
 from pygments import highlight
@@ -43,6 +48,66 @@ class Colorscheme:
     prompt: str = "purple"
     return_: str = "green"
 
+    def __post_init__(self):
+        for field in fields(self):
+            value = getattr(self, field.name)
+            if value not in ANSIColors:
+                raise ValueError(
+                    f"Invalid color '{value}' for '{field.name}' in Colorscheme; must be one of: {', '.join(sorted(ANSIColors))}"
+                )
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Colorscheme:
+        if not isinstance(data, dict):
+            raise TypeError("Colorscheme data must be a dict")
+
+        known_fields = {f.name for f in fields(cls)}
+        unknown_fields = set(data) - known_fields
+        if unknown_fields:
+            warnings.warn(
+                f"Ignoring unknown colorscheme keys: {', '.join(sorted(unknown_fields))}",
+                UserWarning,
+            )
+
+        for field in set(data) & known_fields:
+            colour = data[field]
+            if colour not in ANSIColors:
+                warnings.warn(
+                    f"Invalid color '{colour}' for '{field}' in colorscheme data; must be one of: {', '.join(sorted(ANSIColors))}. Using default color.",
+                    UserWarning,
+                )
+
+        filtered = {k: v for k, v in data.items() if k in known_fields}
+        return cls(**filtered)
+
+    @classmethod
+    def from_json_file(cls, path: Path | str | None = None) -> Colorscheme:
+        if path is None:
+            path = Path.home() / ".pdbcolor.json"
+        expanded_path = Path(path).expanduser()
+
+        if not expanded_path.exists():
+            return cls()
+
+        try:
+            with open(expanded_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError as exception:
+            warnings.warn(
+                f"Could not load colorscheme from {expanded_path}: {exception}. Using default colors.",
+                UserWarning,
+            )
+            return cls()
+
+        try:
+            return cls.from_dict(data)
+        except (TypeError, ValueError) as exception:
+            warnings.warn(
+                f"Invalid colorscheme data in {expanded_path}: {exception}. Using default colors.",
+                UserWarning,
+            )
+            return cls()
+
 
 def ansi_highlight(text: str, color: str) -> str:
     """Highlight text using ANSI escape characters."""
@@ -60,12 +125,11 @@ class PdbColor(Pdb):
         skip=None,
         nosigint=False,
         readrc=True,
-        colorscheme: Colorscheme | None = None,
     ):
         super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
         self.colors = TERMINAL_COLORS.copy()
         self.colors[Comment] = ("green", "brightgreen")
-        self.colorscheme = colorscheme if colorscheme else Colorscheme()
+        self.colorscheme = Colorscheme.from_json_file()
 
         self.python_lexer = PythonLexer()
         self.path_lexer = PathLexer()
