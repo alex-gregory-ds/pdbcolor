@@ -1,8 +1,11 @@
+import json
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+
+from pdbcolor import Colorscheme
 
 
 @pytest.fixture
@@ -47,3 +50,64 @@ def test_post_mortem_debugging_uses_pdbcolor(script_with_runtime_error: Path):
     # colorization is working. This does not check for specific colors to keep
     # the test resilient to color scheme changes
     assert "\x1b" in output.stdout
+
+
+def test_colorscheme_from_home_json(tmp_path: Path, monkeypatch):
+    config_data = {
+        "pdb": "red",
+        "prompt": "blue",
+        "breakpoint_": "yellow",
+        "currentline": "green",
+    }
+    config_file = tmp_path / ".pdbcolor.json"
+    config_file.write_text(json.dumps(config_data), encoding="utf-8")
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+
+    scheme = Colorscheme.from_json_file()
+    assert scheme.pdb == "red"
+    assert scheme.prompt == "blue"
+    assert scheme.breakpoint_ == "yellow"
+    assert scheme.currentline == "green"
+
+
+def test_colorscheme_invalid_color(tmp_path: Path, monkeypatch):
+    """Check that an invalid color in the config file falls back to the default color."""
+    config_data = {
+        "pdb": "invalid_color",
+        "prompt": "blue",
+        "breakpoint_": "yellow",
+        "currentline": "green",
+    }
+    config_file = tmp_path / ".pdbcolor.json"
+    config_file.write_text(json.dumps(config_data), encoding="utf-8")
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+
+    with pytest.warns(UserWarning):
+        scheme = Colorscheme.from_json_file()
+
+    assert scheme.pdb == "purple"
+
+
+def test_colorscheme_unknown_config_key(tmp_path: Path, monkeypatch):
+    """Check that unknown keys in the config file are ignored with a warning."""
+    config_data = {
+        "pdb": "red",
+        "prompt": "blue",
+        "breakpoint_": "yellow",
+        "currentline": "green",
+        "unknown_key": "some_value",
+    }
+    config_file = tmp_path / ".pdbcolor.json"
+    config_file.write_text(json.dumps(config_data), encoding="utf-8")
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+
+    with pytest.warns(UserWarning):
+        scheme = Colorscheme.from_json_file()
+
+    assert scheme.pdb == "red"
+    assert scheme.prompt == "blue"
+    assert scheme.breakpoint_ == "yellow"
+    assert scheme.currentline == "green"
