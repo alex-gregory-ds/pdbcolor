@@ -140,7 +140,6 @@ class PdbColor(Pdb):
             "colorize": colorize,
         }
         if sys.version_info < (3, 14):
-            print("Success")
             # Remove arguments that are not supported in older Python versions
             kwargs.pop("mode")
             kwargs.pop("backend")
