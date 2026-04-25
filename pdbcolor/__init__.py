@@ -44,7 +44,6 @@ class Colorscheme:
     line_prefix: str = "purple"
     eof: str = "green"
     path_prefix: str = "green"
-    pdb: str = "purple"
     prompt: str = "purple"
     return_: str = "green"
 
@@ -135,7 +134,6 @@ class PdbColor(Pdb):
         self.path_lexer = PathLexer()
         self.formatter = TerminalFormatter(colorscheme=self.colors)
 
-        self.prompt = ansi_highlight("(Pdb) ", self.colorscheme.pdb)
         self.prompt_str = ansi_highlight(">>", self.colorscheme.prompt)
         self.breakpoint_str = ansi_highlight("B", self.colorscheme.breakpoint_)
         self.currentline_str = ansi_highlight("->", self.colorscheme.currentline)

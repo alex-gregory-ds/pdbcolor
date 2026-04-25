@@ -167,7 +167,6 @@ your home directory. Below is an example of a value `.pdbcolor.json` file:
 
 ```json
 {
-    "pdb": "red",
     "prompt": "blue",
     "breakpoint_": "yellow",
     "currentline": "yellow"
@@ -181,7 +180,6 @@ Below is a description of each valid key and the element it controls:
 * `line_prefix`: The `->` when you use the `where` command.
 * `eof`: The end of file `[EOF]`.
 * `path_prefix`: The `>` character that goes before each path.
-* `pdb`: The `(Pdb)` at the start of each prompt.
 * `return_`: The `--Return--` characters.
 
 Each key can have one of the following values:
