@@ -54,7 +54,6 @@ def test_post_mortem_debugging_uses_pdbcolor(script_with_runtime_error: Path):
 
 def test_colorscheme_from_home_json(tmp_path: Path, monkeypatch):
     config_data = {
-        "pdb": "red",
         "prompt": "blue",
         "breakpoint_": "yellow",
         "currentline": "green",
@@ -65,7 +64,6 @@ def test_colorscheme_from_home_json(tmp_path: Path, monkeypatch):
     monkeypatch.setenv("HOME", str(tmp_path))
 
     scheme = Colorscheme.from_json_file()
-    assert scheme.pdb == "red"
     assert scheme.prompt == "blue"
     assert scheme.breakpoint_ == "yellow"
     assert scheme.currentline == "green"
@@ -74,8 +72,7 @@ def test_colorscheme_from_home_json(tmp_path: Path, monkeypatch):
 def test_colorscheme_invalid_color(tmp_path: Path, monkeypatch):
     """Check that an invalid color in the config file falls back to the default color."""
     config_data = {
-        "pdb": "invalid_color",
-        "prompt": "blue",
+        "prompt": "invalid_color",
         "breakpoint_": "yellow",
         "currentline": "green",
     }
@@ -87,13 +84,12 @@ def test_colorscheme_invalid_color(tmp_path: Path, monkeypatch):
     with pytest.warns(UserWarning):
         scheme = Colorscheme.from_json_file()
 
-    assert scheme.pdb == "purple"
+    assert scheme.prompt == "purple"
 
 
 def test_colorscheme_unknown_config_key(tmp_path: Path, monkeypatch):
     """Check that unknown keys in the config file are ignored with a warning."""
     config_data = {
-        "pdb": "red",
         "prompt": "blue",
         "breakpoint_": "yellow",
         "currentline": "green",
@@ -107,7 +103,6 @@ def test_colorscheme_unknown_config_key(tmp_path: Path, monkeypatch):
     with pytest.warns(UserWarning):
         scheme = Colorscheme.from_json_file()
 
-    assert scheme.pdb == "red"
     assert scheme.prompt == "blue"
     assert scheme.breakpoint_ == "yellow"
     assert scheme.currentline == "green"

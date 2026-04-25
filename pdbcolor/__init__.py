@@ -124,8 +124,21 @@ class PdbColor(Pdb):
         skip=None,
         nosigint=False,
         readrc=True,
+        mode=None,
+        backend=None,
+        colorize=False,
     ):
-        super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
+        super().__init__(
+            completekey,
+            stdin,
+            stdout,
+            skip,
+            nosigint,
+            readrc,
+            mode=mode,
+            backend=backend,
+            colorize=colorize,
+        )
         self.colors = TERMINAL_COLORS.copy()
         self.colors[Comment] = ("green", "brightgreen")
         self.colorscheme = Colorscheme.from_json_file()
