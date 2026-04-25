@@ -37,6 +37,7 @@ def test_post_mortem_debugging_uses_pdbcolor(script_with_runtime_error: Path):
             "continue",
             str(script_with_runtime_error),
         ],
+        input="quit\n",  # Quit the debugger immediately to prevent hanging
         capture_output=True,
         text=True,
         timeout=5,  # Prevent hanging if the debugger doesn't exit as expected

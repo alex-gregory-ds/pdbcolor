@@ -128,17 +128,25 @@ class PdbColor(Pdb):
         backend=None,
         colorize=False,
     ):
-        super().__init__(
-            completekey,
-            stdin,
-            stdout,
-            skip,
-            nosigint,
-            readrc,
-            mode=mode,
-            backend=backend,
-            colorize=colorize,
-        )
+        kwargs = {
+            "completekey": completekey,
+            "stdin": stdin,
+            "stdout": stdout,
+            "skip": skip,
+            "nosigint": nosigint,
+            "readrc": readrc,
+            "mode": mode,
+            "backend": backend,
+            "colorize": colorize,
+        }
+        if sys.version_info < (3, 14):
+            print("Success")
+            # Remove arguments that are not supported in older Python versions
+            kwargs.pop("mode")
+            kwargs.pop("backend")
+            kwargs.pop("colorize")
+
+        super().__init__(**kwargs)
         self.colors = TERMINAL_COLORS.copy()
         self.colors[Comment] = ("green", "brightgreen")
         self.colorscheme = Colorscheme.from_json_file()
